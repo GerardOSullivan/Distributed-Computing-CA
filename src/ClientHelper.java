@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public class ClientHelper {
   	   this.serverHost = InetAddress.getByName(hostName);
   	   this.serverPort = Integer.parseInt(portNum);
 
-//      // Set truststore properties
+      // Set truststore properties
       System.setProperty("javax.net.ssl.trustStore", "public.jks");
       System.setProperty("javax.net.ssl.trustStorePassword", "123456");
 
@@ -31,10 +32,6 @@ public class ClientHelper {
    public void verifyCredentials(String username,char[] password,Frame mainWindow ) throws IOException{
       mySocket.sendMessage(username);
       if (mySocket.receiveMessage().equals("OK")) {
-         System.out.println(toString(password));
-         //I have to convert the password from a char array to a String
-         //to send the message on the output stream.
-         //I created a new function using the string builder to do this.
          mySocket.sendMessage(toString(password));
          if (mySocket.receiveMessage().equals("OK")) {
             JOptionPane.showMessageDialog(null, "Login successful.");
@@ -60,11 +57,17 @@ public class ClientHelper {
    }
 
    public void closeConnection( ) throws IOException{
+      mySocket.sendMessage("LOG_OFF");
       mySocket.close( );
    } // end done 
 
    public void sendMessageToServer(String message){
-      mySocket.sendMessage(message);
+      if(message.getBytes(StandardCharsets.UTF_8).length<=1024)
+      {
+         mySocket.sendMessage(message);
+      }else{
+         JOptionPane.showMessageDialog(null, "The message is too long. Shorten the message and try again!");
+      }
    }
 
    public List<String> receiveMessagesFromServer() throws IOException {

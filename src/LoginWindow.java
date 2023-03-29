@@ -63,7 +63,7 @@ public class LoginWindow {
 
 
         try {
-            String hostName = JOptionPane.showInputDialog(null,"What is the name of the server host?");
+            String hostName = JOptionPane.showInputDialog(null,"What is the ip address of the server host?");
             if (hostName.length() == 0) // if user did not enter a name
                 hostName = "localhost";  //   use the default host name
 

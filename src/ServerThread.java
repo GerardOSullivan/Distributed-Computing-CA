@@ -12,6 +12,7 @@ class ServerThread implements Runnable {
     private JPanel messagePanel;
     private Boolean disconnected;
     private boolean clientReadyForMessages=false;
+    private String message;
 
     ServerThread(StreamSocket myDataSocket, JPanel messagePanel, Boolean disconnected) {
         this.myDataSocket = myDataSocket;
@@ -40,7 +41,7 @@ class ServerThread implements Runnable {
     } //end run
 
     private boolean isDone(boolean done) throws IOException {
-        if (disconnected){
+        if (disconnected || message.equals("LOG_OFF")){
             myDataSocket.close( );
             done = true;
         }
@@ -60,13 +61,14 @@ class ServerThread implements Runnable {
 
     private synchronized void receiveMessagesFromClient() throws IOException {
         //server block and wait for messages
-        String message = myDataSocket.receiveMessage();
+        message = myDataSocket.receiveMessage();
         //check if disconnected while blocking
         if(!disconnected){
             //check if client wants messages
             if(!message.equals("SEND_ALL_MESSAGES")){
-                //check if client tried to send a message to try and interrupt the server from sending all the messages
-                if(!message.equals("LAST_MESSAGE")){
+                //check if client tried to send a message to attempt to interrupt the server from sending all the messages
+                //or the client attempted to try and stop the server thread.
+                if(!message.equals("LAST_MESSAGE")&& !message.equals("LOG_OFF")){
                     addMessageToPanel(messagePanel,"Message received: "+ message);
                     MessageServer.storeServerMessages(message);
                 }

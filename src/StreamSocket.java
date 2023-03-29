@@ -88,12 +88,6 @@ public class StreamSocket extends Socket {
       // Unblock the thread to send messages to the input stream
       sendMessage("SEND_ALL_MESSAGES");
 
-      //Because the readLine function blocks calls i had to set a timer to interrupt the socket
-      //Before adding SSL I used the input.ready() function. This Boolean value would check if there was data
-      // in the input stream. This function doesnt work with the
-      //SSL socket because the SSL Socket uses a buffered stream that sits on top of the
-      //socket input stream.
-
       //gather all the messages in the arraylist
       List<String> messages = new ArrayList<>();
       String message;
